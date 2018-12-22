@@ -1,0 +1,39 @@
+body {
+  background-image: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/nasty_fabric.png);
+  color: rgb(36, 75, 158);
+  font-family: monospace;
+  font-size: 16pt;
+  text-align: center;
+}
+canvas {
+  display: block;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border: solid .2em white;
+  height: 90vh;
+}
+
+#score {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+#controls {
+  font-size: 16pt;
+  text-align: left;
+  color: black;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.option {
+  display: inline-block;
+  width: 70px;
+  text-align: right;
+}
+.descr {
+  display: inline-block;
+}

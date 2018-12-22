@@ -1,1 +1,2 @@
-Tetris-Game
+# Tetris-Game
+Native JS Tetris Game

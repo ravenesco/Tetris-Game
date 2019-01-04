@@ -1,39 +1,69 @@
 body {
   background-image: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/nasty_fabric.png);
-  color: rgb(36, 75, 158);
+  color: black;
   font-family: monospace;
   font-size: 16pt;
   text-align: center;
-}
-canvas {
-  display: block;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  border: solid .2em white;
-  height: 90vh;
-}
-
-#score {
-  position: absolute;
-  top: 10px;
-  right: 20px;
 }
 
 #controls {
   font-size: 16pt;
   text-align: left;
-  color: black;
-  position: absolute;
+  /* position: absolute; */
+  float: left;
   top: 10px;
   left: 20px;
+  display: inline-block !important;
 }
-
 .option {
   display: inline-block;
   width: 70px;
-  text-align: right;
+  text-align: left;
 }
 .descr {
   display: inline-block;
+}
+
+#canvas {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block !important;
+}
+canvas {
+  display: inline-block !important;
+  /* display: block; */
+  border: solid .2em white;
+}
+#tetris {
+  height: 90vh;
+  position: relative;
+  top: 10px;
+}
+#next-figure {
+  display: inline-block !important;
+  margin-left: 50px;
+  position: relative;
+  top: -470px;
+}
+#preview {
+  /* position: absolute; */
+  top: 60px;
+  right: 400px;
+}
+
+#score-outer {
+  display: inline-block !important;
+  float: right;
+  color: rgb(36, 75, 158);
+}
+.score {
+  /* position: absolute; */
+  top: 10px;
+}
+#score {
+  right: 20px;
+}
+#score-label {
+  right: 100px;
 }

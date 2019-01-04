@@ -1,13 +1,20 @@
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
 
+const canvas2 = document.getElementById('preview');
+const context2 = canvas2.getContext('2d');
+
 context.scale(20, 20);
+context2.scale(25, 25);
 
 const arena = createMatrix(12, 20);
+const arena2 = createMatrix(5, 5);
 
 const player = {
   pos: {x : 0, y : 0},
-  matrix: null,
+  matrix_current: null,
+  matrix_next: null,
+  matrix_next_type: null,
   score: 0
 }
 
@@ -22,7 +29,7 @@ const colors = [
   '#e17055'
 ]
 
-let themeMusic = new Audio("../audio/Majesty.mp3");
+let themeMusic = new Audio("/audio/Majesty.mp3");
 themeMusic.loop = true;
 themeMusic.play();
 
@@ -38,6 +45,10 @@ function createMatrix(w, h) {
   return matrix;
 }
 
+const pieces = 'IJLOTSZ';
+player.matrix_next_type = pieces[pieces.length * Math.random() | 0];
+player.matrix_next = createPiece(player.matrix_next_type);
+
 function createPiece(type) {
   if (type === 'T') {
     return [
@@ -47,10 +58,10 @@ function createPiece(type) {
     ];
   } else if (type === 'I') {
     return [
-      [0, 0, 6, 0],
-      [0, 0, 6, 0],
-      [0, 0, 6, 0],
-      [0, 0, 6, 0]
+      [0, 6, 0, 0],
+      [0, 6, 0, 0],
+      [0, 6, 0, 0],
+      [0, 6, 0, 0]
     ];
   } else if (type === 'S') {
     return [
@@ -84,12 +95,29 @@ function createPiece(type) {
   }
 }
 
+
 function draw() {
   context.fillStyle = 'black';
   context.fillRect(0,0,canvas.width, canvas.height);
 
+  context2.fillStyle = 'black';
+  context2.fillRect(0,0,canvas2.width, canvas2.height);
+
   drawMatrix(arena, {x : 0, y : 0});
-  drawMatrix(player.matrix, player.pos);
+  drawMatrix(player.matrix_current, player.pos);
+
+  drawNextMatrix(arena2, {x : 0, y : 0});
+  if ('TSZ'.includes(player.matrix_next_type)) {
+    drawNextMatrix(player.matrix_next, {x: 0.5, y: 1});
+  } else if (player.matrix_next_type === 'I') {
+    drawNextMatrix(player.matrix_next, {x: 0.5, y: 0});
+  } else if (player.matrix_next_type === 'O') {
+    drawNextMatrix(player.matrix_next, {x: 1, y: 1});
+  } else if (player.matrix_next_type === 'J') {
+    drawNextMatrix(player.matrix_next, {x: 1, y: 0.5});
+  } else if (player.matrix_next_type === 'L') {
+    drawNextMatrix(player.matrix_next, {x: 0, y: 0.5});
+  }
 }
 
 function playerDrop() {
@@ -128,8 +156,19 @@ function drawMatrix(matrix, offset) {
   });
 }
 
+function drawNextMatrix(matrix, offset) {
+  matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        context2.fillStyle = colors[value];
+        context2.fillRect(x + offset.x, y + offset.y, 1, 1);
+      }
+    });
+  });
+}
+
 function merge(arena, player) {
-  player.matrix.forEach((row, y) => {
+  player.matrix_current.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
         arena[y + player.pos.y][x + player.pos.x] = value;
@@ -139,7 +178,7 @@ function merge(arena, player) {
 }
 
 function collide(arena, player) {
-  const m = player.matrix;
+  const m = player.matrix_current;
   const o = player.pos;
   
   for (let y = 0; y < m.length; ++y) {
@@ -162,13 +201,13 @@ function playerMove(dir) {
 function playerRotate(dir) {
   const pos = player.pos.x;
   let offset = 1;
-  rotate(player.matrix, dir);
+  rotate(player.matrix_current, dir);
   while (collide(arena, player)) {
     player.pos.x += offset;
     offset = -(offset + (offset > 0 ? 1 : -1));
     
-    if (offset > player.matrix[0].length) {
-      rotate(player.matrix, -dir);
+    if (offset > player.matrix_current[0].length) {
+      rotate(player.matrix_current, -dir);
       player.pos.x = pos;
       return;
     }
@@ -191,10 +230,13 @@ function rotate(matrix, dir) {
 
 function playerReset() {
   const pieces = 'IJLOTSZ';
-  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+  player.matrix_current = player.matrix_next;
+  player.matrix_next_type = pieces[pieces.length * Math.random() | 0];
+  player.matrix_next = createPiece(player.matrix_next_type);
+  // player.matrix_next = createPiece(pieces[pieces.length * Math.random() | 0]);
   player.pos.y = 0;
   player.pos.x = (arena[0].length / 2 | 0) -
-                 (player.matrix[0].length / 2 | 0);
+                 (player.matrix_current[0].length / 2 | 0);
   if (collide(arena, player)) {
     arena.forEach(row => row.fill(0));
     player.score = 0;
@@ -232,13 +274,13 @@ document.addEventListener('keydown', event => {
     playerMove(1);
   } else if (key === 40) {
     playerDrop();
-  } else if (key === 81) {
+  } else if (key === 38) {
     playerRotate(1);
-  } else if (key === 87) {
-    playerRotate(-1);
   }
 });
 
 playerReset();
 updateScore();
 update();
+
+// Add sounds for row clear

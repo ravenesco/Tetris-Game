@@ -4,17 +4,24 @@ const context = canvas.getContext('2d');
 const canvas2 = document.getElementById('preview');
 const context2 = canvas2.getContext('2d');
 
+const canvas3 = document.getElementById('preview2');
+const context3 = canvas3.getContext('2d');
+
 context.scale(20, 20);
-context2.scale(25, 25);
+context2.scale(30, 30);
+context3.scale(30, 30);
 
 const arena = createMatrix(12, 20);
-const arena2 = createMatrix(5, 5);
+const arena2 = createMatrix(4, 4);
+const arena3 = createMatrix(4, 4);
 
 const player = {
   pos: {x : 0, y : 0},
   matrix_current: null,
   matrix_next: null,
   matrix_next_type: null,
+  matrix_2steps_ahead: null,
+  matrix_2steps_ahead_type: null,
   score: 0
 }
 
@@ -30,12 +37,19 @@ const colors = [
 ]
 
 let themeMusic = new Audio("/audio/Majesty.mp3");
+themeMusic.volume = 0.07;
 themeMusic.loop = true;
 themeMusic.play();
 
 let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
+
+const pieces = 'IJLOTSZ';
+player.matrix_2steps_ahead_type = pieces[pieces.length * Math.random() | 0];
+player.matrix_2steps_ahead = createPiece(player.matrix_2steps_ahead_type);
+player.matrix_next_type = pieces[pieces.length * Math.random() | 0];
+player.matrix_next = createPiece(player.matrix_next_type);
 
 function createMatrix(w, h) {
   const matrix = [];
@@ -44,10 +58,6 @@ function createMatrix(w, h) {
   }
   return matrix;
 }
-
-const pieces = 'IJLOTSZ';
-player.matrix_next_type = pieces[pieces.length * Math.random() | 0];
-player.matrix_next = createPiece(player.matrix_next_type);
 
 function createPiece(type) {
   if (type === 'T') {
@@ -95,7 +105,6 @@ function createPiece(type) {
   }
 }
 
-
 function draw() {
   context.fillStyle = 'black';
   context.fillRect(0,0,canvas.width, canvas.height);
@@ -103,20 +112,36 @@ function draw() {
   context2.fillStyle = 'black';
   context2.fillRect(0,0,canvas2.width, canvas2.height);
 
-  drawMatrix(arena, {x : 0, y : 0});
-  drawMatrix(player.matrix_current, player.pos);
+  context3.fillStyle = 'black';
+  context3.fillRect(0,0,canvas3.width, canvas3.height);
 
-  drawNextMatrix(arena2, {x : 0, y : 0});
+  drawMatrix('context', arena, {x : 0, y : 0});
+  drawMatrix('context', player.matrix_current, player.pos);
+
+  drawMatrix('context2', arena2, {x : 0, y : 0});
   if ('TSZ'.includes(player.matrix_next_type)) {
-    drawNextMatrix(player.matrix_next, {x: 0.5, y: 1});
+    drawMatrix('context2', player.matrix_next, {x: 0.5, y: 1});
   } else if (player.matrix_next_type === 'I') {
-    drawNextMatrix(player.matrix_next, {x: 0.5, y: 0});
+    drawMatrix('context2', player.matrix_next, {x: 0.5, y: 0});
   } else if (player.matrix_next_type === 'O') {
-    drawNextMatrix(player.matrix_next, {x: 1, y: 1});
+    drawMatrix('context2', player.matrix_next, {x: 1, y: 1});
   } else if (player.matrix_next_type === 'J') {
-    drawNextMatrix(player.matrix_next, {x: 1, y: 0.5});
+    drawMatrix('context2', player.matrix_next, {x: 1, y: 0.5});
   } else if (player.matrix_next_type === 'L') {
-    drawNextMatrix(player.matrix_next, {x: 0, y: 0.5});
+    drawMatrix('context2', player.matrix_next, {x: 0, y: 0.5});
+  }
+
+  drawMatrix('context3', arena3, {x : 0, y : 0});
+  if ('TSZ'.includes(player.matrix_2steps_ahead_type)) {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0.5, y: 1});
+  } else if (player.matrix_2steps_ahead_type === 'I') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0.5, y: 0});
+  } else if (player.matrix_2steps_ahead_type === 'O') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1, y: 1});
+  } else if (player.matrix_2steps_ahead_type === 'J') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1, y: 0.5});
+  } else if (player.matrix_2steps_ahead_type === 'L') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0, y: 0.5});
   }
 }
 
@@ -145,23 +170,20 @@ function update(time = 0) {
   requestAnimationFrame(update);
 }
 
-function drawMatrix(matrix, offset) {
+function drawMatrix(context_type, matrix, offset) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
-        context.fillStyle = colors[value];
-        context.fillRect(x + offset.x, y + offset.y, 1, 1);
-      }
-    });
-  });
-}
-
-function drawNextMatrix(matrix, offset) {
-  matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        context2.fillStyle = colors[value];
-        context2.fillRect(x + offset.x, y + offset.y, 1, 1);
+        if (context_type === "context") {
+          context.fillStyle = colors[value];
+          context.fillRect(x + offset.x, y + offset.y, 1, 1);
+        } else if (context_type === "context2") {
+          context2.fillStyle = colors[value];
+          context2.fillRect(x + offset.x, y + offset.y, 1, 1);
+        } else if (context_type === "context3") {
+          context3.fillStyle = colors[value];
+          context3.fillRect(x + offset.x, y + offset.y, 1, 1);
+        }        
       }
     });
   });
@@ -229,11 +251,12 @@ function rotate(matrix, dir) {
 }
 
 function playerReset() {
-  const pieces = 'IJLOTSZ';
   player.matrix_current = player.matrix_next;
-  player.matrix_next_type = pieces[pieces.length * Math.random() | 0];
-  player.matrix_next = createPiece(player.matrix_next_type);
-  // player.matrix_next = createPiece(pieces[pieces.length * Math.random() | 0]);
+  player.matrix_next = player.matrix_2steps_ahead;
+  player.matrix_next_type = player.matrix_2steps_ahead_type;
+  player.matrix_2steps_ahead_type = pieces[pieces.length * Math.random() | 0];
+  player.matrix_2steps_ahead = createPiece(player.matrix_2steps_ahead_type);
+
   player.pos.y = 0;
   player.pos.x = (arena[0].length / 2 | 0) -
                  (player.matrix_current[0].length / 2 | 0);

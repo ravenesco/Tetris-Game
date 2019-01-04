@@ -8,16 +8,22 @@
 <body>
   <div id="controls">
       <h2>Controls:</h2>
-      <p><span class="option">←, →</span><span class="descr">&nbsp;- move left, right</span><br/>
-      <span class="option">↓</span><span class="descr">&nbsp;- drop</span><br/>
-      <span class="option">↑</span><span class="descr">&nbsp;- rotate</span></p>
+      <p>
+        <span class="option">↑</span><span class="descr">&nbsp;- rotate</span><br/>
+        <span class="option">←&nbsp;&nbsp;&nbsp;→</span><span class="descr">&nbsp;- move left, right</span><br/>
+        <span class="option">↓</span><span class="descr">&nbsp;- drop</span>
+      </p>
   </div>
   <div id="canvas">
+    <div id="tetris-outer">
       <canvas id="tetris" width="240" height="400"></canvas>
-      <div id="next-figure">
-          <h2>Next figure:</h2>
-          <canvas id="preview" width="100" height="100"></canvas>
-      </div>
+    </div>
+    <div id="next-figure">
+        <h2>Next figure:</h2>
+        <canvas id="preview" width="120" height="120"></canvas>
+        <h2>Figure<br/>2 steps ahead:</h2>
+        <canvas id="preview2" width="120" height="120"></canvas>
+    </div>
   </div>
   <div id="score-outer">
       <h2 class="score" id="score-label">Score:</h2>

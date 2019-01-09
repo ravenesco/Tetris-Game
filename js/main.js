@@ -12,8 +12,8 @@ context2.scale(30, 30);
 context3.scale(30, 30);
 
 const arena = createMatrix(12, 20);
-const arena2 = createMatrix(4, 4);
-const arena3 = createMatrix(4, 4);
+const arena2 = createMatrix(5, 5);
+const arena3 = createMatrix(5, 5);
 
 const player = {
   pos: {x : 0, y : 0},
@@ -120,28 +120,28 @@ function draw() {
 
   drawMatrix('context2', arena2, {x : 0, y : 0});
   if ('TSZ'.includes(player.matrix_next_type)) {
-    drawMatrix('context2', player.matrix_next, {x: 0.5, y: 1});
+    drawMatrix('context2', player.matrix_next, {x: 1, y: 1.5});
   } else if (player.matrix_next_type === 'I') {
-    drawMatrix('context2', player.matrix_next, {x: 0.5, y: 0});
-  } else if (player.matrix_next_type === 'O') {
-    drawMatrix('context2', player.matrix_next, {x: 1, y: 1});
-  } else if (player.matrix_next_type === 'J') {
     drawMatrix('context2', player.matrix_next, {x: 1, y: 0.5});
+  } else if (player.matrix_next_type === 'O') {
+    drawMatrix('context2', player.matrix_next, {x: 1.5, y: 1.5});
+  } else if (player.matrix_next_type === 'J') {
+    drawMatrix('context2', player.matrix_next, {x: 1.5, y: 1});
   } else if (player.matrix_next_type === 'L') {
-    drawMatrix('context2', player.matrix_next, {x: 0, y: 0.5});
+    drawMatrix('context2', player.matrix_next, {x: 0.5, y: 1});
   }
 
   drawMatrix('context3', arena3, {x : 0, y : 0});
   if ('TSZ'.includes(player.matrix_2steps_ahead_type)) {
-    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0.5, y: 1});
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1, y: 1.5});
   } else if (player.matrix_2steps_ahead_type === 'I') {
-    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0.5, y: 0});
-  } else if (player.matrix_2steps_ahead_type === 'O') {
-    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1, y: 1});
-  } else if (player.matrix_2steps_ahead_type === 'J') {
     drawMatrix('context3', player.matrix_2steps_ahead, {x: 1, y: 0.5});
+  } else if (player.matrix_2steps_ahead_type === 'O') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1.5, y: 1.5});
+  } else if (player.matrix_2steps_ahead_type === 'J') {
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 1.5, y: 1});
   } else if (player.matrix_2steps_ahead_type === 'L') {
-    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0, y: 0.5});
+    drawMatrix('context3', player.matrix_2steps_ahead, {x: 0.5, y: 1});
   }
 }
 
@@ -307,3 +307,4 @@ updateScore();
 update();
 
 // Add sounds for row clear
+// Make figures spawn randomly rotated
